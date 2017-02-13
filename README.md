@@ -1,4 +1,4 @@
-# VCR.js
+# VCR.js [![CircleCI](https://circleci.com/gh/blueberryapps/vcr.js.svg?style=svg)](https://circleci.com/gh/blueberryapps/vcr.js)
 
 Mock server with Proxy and Record support inspired by ruby VCR.
 
