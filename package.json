@@ -16,6 +16,10 @@
     "vcr": "bin/vcr.js"
   },
   "main": "lib/index.js",
+  "repository" : {
+    "type" : "git",
+    "url" : "https://github.com/blueberryapps/vcr.js"
+  },
   "scripts": {
     "start": "ts-node src/index.ts",
     "test": "jest",

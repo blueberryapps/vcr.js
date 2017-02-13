@@ -12,7 +12,6 @@ yarn vcr -- -f ./fixtures
 ```
 Now You can hit localhost:8100/users and get Your JSON!
 
-
 ## Full terminal usage
 
 run help for getting all possible options:
@@ -87,8 +86,10 @@ With cookie `record_fixture_variant=blacklistedUser` proxy recorded fixtures wil
 ```console
 # tests
 $ yarn test
+
 # tslint
 $ yarn tslint
+
 # start
 $ yarn start
 ```
