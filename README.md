@@ -10,15 +10,16 @@ mkdir fixtures/users
 echo '{"users": ["Tim", "Tom"]}' > ./fixtures/users/GET.default.json
 yarn vcr -- -f ./fixtures
 ```
-Now You can hit localhost:8100/users and get Your JSON!
+Now you can hit localhost:8100/users and get your JSON!
 
-## Full terminal usage
+## Terminal options
 
-run help for getting all possible options:
+Use `--help` to get all the possible options:
 ```
 yarn vcr -- --help
 ```
-outputs:
+
+Output:
 ```
 yarn vcr -- --fixturesDir [./fixtures]
 
@@ -37,49 +38,49 @@ Examples:
 ```
 
 ## Resolving fixtures
-When You hit the VCR.js server with some URL (e.g. `GET http://localhost:8100/api/v1/users`),
-URL is resolved to path to fixture file, consisting of relative path to directory and file name,
+When you hit the VCR.js server with a URL (e.g. `GET http://localhost:8100/api/v1/users`),
+the URL is translated to the path of the fixture file, consisting of a relative path to a directory and a file name,
 in this case `{fixturesDir}/api/v1/users/GET.default.(json|js)`.
 
-In common form:
+In general form:
 ```
 {fixturesDir}/{endpointPath}/{method}.{variant}.(json|js)
 ```
 
 ### Dynamic route params
-To match endpoint with dynamic params, use `{dynamicParam}` as directory name.
-If You want to get the same response from `GET /users/1` and `GET /users/42`,
-create file `{fixturesDir}/users/{id}/GET.default.json` and You can reuse Your fixture file for all users!
-As a bonus You can have these params accessible in fixture and customize response with `.js` fixture (described below).
+To match an endpoint with dynamic params, use `{dynamicParam}` as the directory name.
+If you would like to get the same response from both `GET /users/1` and `GET /users/42`,
+create a file with the name `{fixturesDir}/users/{id}/GET.default.json` and you can reuse your fixture file for all users!
+As a bonus you can access these params in fixtures and customize the response by using a `.js` fixture (described below).
 
 
-### Custom responses from single endpoint - Variants
-What if You want to customize response from single endpoint?
-Just set cookie `variants` to list of desired variants separated by comma, e.g.:
+### Custom responses of a single endpoint - Variants
+What if you wanted to customize the response of a single endpoint?
+Just set a `variants` cookies with a list of desired variants separated by comma as the value, e.g.
 `/api/v1/users/{id}/GET.variantName,/api/v1/projects/POST.otherVariant`
-Stub server will find cookie variant matching request path and provide You with correct fixture.
+Stub server will find the corresponding cookie variant matching the request path and provide you with the correct fixture.
 
-### What types of fixtures can be handeled?
-Currently supported are `.json` and `.js` fixtures. JS fixtures are basically handlers as You know them from expressjs/node.
-Simple template for `.js` fixture:
+### What fixture types are handled?
+Currently supported fixture types are `.json` and `.js`. JS fixtures are basically handlers as you know them from expressjs/node.
+A simple template for a `.js` fixture:
 ```
 module.exports = (req, res, next) {
   res.status(400).json({error: 'Bad request :D'});
 };
 ```
 
-## Proxy mode - fixtures recording
-If You specify `-p` or `--proxy` url, stub server will look for local fixtures and if no fixture is found,
-it will proxy request to 'real API', streaming response back and **optionally** save response as fixture.
+## Proxy mode - fixture recording
+If you specify a `-p` or `--proxy` URL, the stub server will look for local fixtures and if no fixture is found,
+it will proxy the request to the 'real API', streaming the response back and **optionally** saving it as a fixture.
 
 ### Proxy + record mode
-Together with `proxy` option you can add `-r` or `--record`. It will enable saving fixture from proxy on the disc.
-e.g. after running `yarn vcr -- -f ./fixtures -p https://ap.io/ -r` with clear fixtures folder and hitting `GET /users`,
-response from `https://ap.io/users` is streamed to client and also saved in `fixtures/users/GET.default.json`.
+Together with `proxy` option you can add `-r` or `--record`. This will enable saving fixtures from a proxy locally on the disc.
+For example after running `yarn vcr -- -f ./fixtures -p https://ap.io/ -r` with an empty fixtures folder and hitting `GET /users`,
+response from `https://ap.io/users` is streamed to the client and is also saved in `fixtures/users/GET.default.json`.
 
 ### Custom variants for recording
-If You want to save fixtures from proxy under custom variant, just set cookie `record_fixture_variant` to any word You want.
-With cookie `record_fixture_variant=blacklistedUser` proxy recorded fixtures will be saved as `{path}/GET.blacklistedUser.json`
+If you want to save fixtures from proxy under a custom variant, just set the `record_fixture_variant` cookie with any word you want as the value.
+With the `record_fixture_variant=blacklistedUser` cookie the recorded fixtures will be saved as `{path}/GET.blacklistedUser.json`.
 
 ## Development
 
