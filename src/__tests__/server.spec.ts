@@ -212,13 +212,33 @@ describe('Stub server in proxy mode', async () => {
     emptyDirSync(outputFixturesDir);
   });
 
-  it('should proxy requests and keep correct encoding', async () => {
+  it('should proxy requests and keep correct encoding - gzip', async () => {
       const appserver = server(fixtureDirs, 'http://localhost:5000', outputFixturesDir);
       await request.agent(appserver)
         .get('/mocked')
         .set('accept-encoding', 'gzip')
         .expect(200)
         .expect('content-encoding', 'gzip')
+        .then((res: request.Response) => { });
+  });
+
+  it('should proxy requests and keep correct encoding - deflate', async () => {
+      const appserver = server(fixtureDirs, 'http://localhost:5000', outputFixturesDir);
+      await request.agent(appserver)
+        .get('/mocked')
+        .set('accept-encoding', 'deflate')
+        .expect(200)
+        .expect('content-encoding', 'deflate')
+        .then((res: request.Response) => { });
+  });
+
+  it('should proxy requests and keep correct encoding - gzip, deflate', async () => {
+      const appserver = server(fixtureDirs, 'http://localhost:5000', outputFixturesDir);
+      await request.agent(appserver)
+        .get('/mocked')
+        .set('accept-encoding', 'deflate, gzip')
+        .expect(200)
+        .expect('content-encoding', 'deflate')
         .then((res: request.Response) => { });
   });
 
