@@ -16,6 +16,7 @@ export default function createProxyRequestOptions(req: Request, realApiBaseUrl: 
     port: parseInt(uri.port || '', 10) || undefined,
   };
   delete options.headers['host']; // tslint:disable-line:no-string-literal
+  delete options.headers['accept-encoding']; // tslint:disable-line:no-string-literal
 
   return (options as CoreOptions);
 }

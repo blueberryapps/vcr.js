@@ -28,6 +28,10 @@ export default (fixtureDirs: string[] = [], realApiBaseUrl?: string, outputDir?:
   if (realApiBaseUrl) {
     console.log(`${chalk.magenta('[Stub server]')} not found fixtures are handled by:`);
     console.log(chalk.yellow(realApiBaseUrl));
+    if (outputDir) {
+      console.log(`${chalk.magenta('[Stub server]')} resolved fixtures from proxy will be saved to:`);
+      console.log(chalk.yellow(outputDir));
+    }
   }
 
   // Variants handler
