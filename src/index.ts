@@ -7,9 +7,14 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 // const realApiUrl = 'https://js-developer-second-round.herokuapp.com/api/v1';
-const realApiUrl = 'http://localhost:5000';
 
-app.use(server([path.join(__dirname, 'fixtures')], realApiUrl, path.join(__dirname, 'generatedFixtures')));
+const options = {
+  realApiBaseUrl: 'http://localhost:5000',
+  outputDir: path.join(__dirname, 'generatedFixtures'),
+  proxyFailedResponses: false,
+};
+
+app.use(server([path.join(__dirname, 'fixtures')], options));
 
 app.listen(PORT, function(err: Error) {
   if (err) {
