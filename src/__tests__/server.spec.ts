@@ -52,7 +52,7 @@ describe('Stub server', () => {
             endpoint: '/cnx-gbl-org-quality/qa/v1/dm/jobsites/{id}',
             method: 'GET',
             variants: {
-              default: path.join(__dirname, 'fixtures/cnx-gbl-org-quality/qa/v1/dm/jobsites/{id}/GET.default.ts')
+              default: path.join(__dirname, 'fixtures/cnx-gbl-org-quality/qa/v1/dm/jobsites/{id}/GET.default.js')
             }
           },
           {
@@ -72,9 +72,6 @@ describe('Stub server', () => {
       .get('/nonexistingEndpoint')
       .expect(404)
       .then((res: request.Response) => {
-        // console.log('=======================================');
-        // console.log(res.status);
-        // console.log(res.body);
         expect(res.body.matchedEndpoints).toEqual([]);
       })
   );
@@ -96,7 +93,7 @@ describe('Stub server', () => {
             endpoint: '/cnx-gbl-org-quality/qa/v1/dm/jobsites/{id}',
             method: 'GET',
             variants: {
-              default: path.join(__dirname, 'fixtures/cnx-gbl-org-quality/qa/v1/dm/jobsites/{id}/GET.default.ts')
+              default: path.join(__dirname, 'fixtures/cnx-gbl-org-quality/qa/v1/dm/jobsites/{id}/GET.default.js')
             }
           },
         ]);
