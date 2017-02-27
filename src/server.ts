@@ -13,7 +13,11 @@ import {Request, Response, NextFunction} from 'express';
 
 export default (fixtureDirs: string[] = [], realApiBaseUrl?: string, outputDir?: string) => {
   const app = express();
-  app.use(cors());
+  app.use((req, res, next) => {
+    // needed for ajax requests from app - fetch init.credentials must be set to pass cookies with ajax
+    // without following cors setup client blocks response
+    cors({origin: req.get('Origin'), credentials: true})(req, res, next);
+  });
   app.use(cookieParser());
   app.use(morgan(`${chalk.magenta('[Stub server]')} ${chalk.green(':method')} :url ${chalk.magenta(':status')} ${chalk.cyan(':response-time ms')} HTTP/:http-version :date[iso]`));
 
