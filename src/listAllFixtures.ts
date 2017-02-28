@@ -3,7 +3,7 @@ import * as path from 'path';
 
 export interface FixturesMap {[key: string]: string; };
 
-const SUPPORTED_METHODS = ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'];
+const SUPPORTED_METHODS = new Set(['GET', 'POST', 'PUT', 'DELETE', 'PATCH']);
 
 // List all files in a directory in Node.js recursively in a synchronous fashion
 const walkSync = function(dir: string, filelist: string[] = []): string[] {
@@ -23,7 +23,7 @@ const isFixture = (absolutePath: string): boolean => {
   const extensionSupported = /\.(js|json)$/.test(absolutePath);
 
   const fixtureMethod = path.basename(absolutePath).split('.')[0].toUpperCase();
-  const methodSupported = SUPPORTED_METHODS.indexOf(fixtureMethod) > -1;
+  const methodSupported = SUPPORTED_METHODS.has(fixtureMethod);
 
   return extensionSupported && methodSupported;
 };
