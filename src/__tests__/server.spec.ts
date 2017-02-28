@@ -24,7 +24,7 @@ afterAll(async () => {
 });
 
 describe('Stub server', () => {
-  const app = server([path.join(__dirname, 'fixtures')], 'https://jsonplaceholder.typicode.com');
+  const app = server([path.join(__dirname, 'fixtures')], {realApiBaseUrl: 'https://jsonplaceholder.typicode.com'});
 
   it('should respond with index', async () =>
     await request(app)
@@ -210,7 +210,7 @@ describe('Stub server in proxy mode', async () => {
   });
 
   it('should proxy requests and keep correct encoding - gzip', async () => {
-      const appserver = server(fixtureDirs, 'http://localhost:5000', outputFixturesDir);
+      const appserver = server(fixtureDirs, {realApiBaseUrl: 'http://localhost:5000', outputDir: outputFixturesDir});
       await request.agent(appserver)
         .get('/mocked')
         .set('accept-encoding', 'gzip')
@@ -220,7 +220,7 @@ describe('Stub server in proxy mode', async () => {
   });
 
   it('should proxy requests and keep correct encoding - deflate', async () => {
-      const appserver = server(fixtureDirs, 'http://localhost:5000', outputFixturesDir);
+      const appserver = server(fixtureDirs, {realApiBaseUrl: 'http://localhost:5000', outputDir: outputFixturesDir});
       await request.agent(appserver)
         .get('/mocked')
         .set('accept-encoding', 'deflate')
@@ -230,7 +230,7 @@ describe('Stub server in proxy mode', async () => {
   });
 
   it('should proxy requests and keep correct encoding - gzip, deflate', async () => {
-      const appserver = server(fixtureDirs, 'http://localhost:5000', outputFixturesDir);
+      const appserver = server(fixtureDirs, {realApiBaseUrl: 'http://localhost:5000', outputDir: outputFixturesDir});
       await request.agent(appserver)
         .get('/mocked')
         .set('accept-encoding', 'deflate, gzip')
@@ -240,7 +240,7 @@ describe('Stub server in proxy mode', async () => {
   });
 
   it('should save correctly decoded fixture to fixturePath ', async () => {
-    const appserver = server(fixtureDirs, 'http://localhost:5000', outputFixturesDir);
+    const appserver = server(fixtureDirs, {realApiBaseUrl: 'http://localhost:5000', outputDir: outputFixturesDir});
 
     await request.agent(appserver)
       .get('/mocked')
@@ -258,7 +258,7 @@ describe('Stub server in proxy mode', async () => {
   });
 
   it('should proxy and save custom variant when cookie record_fixture_variant is set but default fixture is present', async () => {
-    const appserver = server(fixtureDirs, 'http://localhost:5000', outputFixturesDir);
+    const appserver = server(fixtureDirs, {realApiBaseUrl: 'http://localhost:5000', outputDir: outputFixturesDir});
 
     await request.agent(appserver)
       .get('/mocked')

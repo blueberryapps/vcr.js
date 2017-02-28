@@ -24,10 +24,14 @@ Output:
 yarn vcr -- --fixturesDir [./fixtures]
 
 Options:
-  -h, --help         Show help                                         [boolean]
-  -f, --fixturesDir  Directory where to load fixtures    [default: "./fixtures"]
-  -p, --proxy        URL to real API
-  -r, --record       Record proxied responses to fixtures dir          [boolean]
+  -h, --help                  Show help                                [boolean]
+  -f, --fixturesDir           Directory where to load fixtures
+                                                         [default: "./fixtures"]
+  -p, --proxy                 URL to real API
+  -r, --record                Record proxied responses to fixtures dir [boolean]
+  -a, --proxyFailedResponses  Record and proxy response independently on status
+                              code, including 5xx, 4xx, 3xx. Nice for debug.
+                                                                       [boolean]
   --port                                                         [default: 8100]
 
 Examples:

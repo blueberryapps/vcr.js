@@ -11,7 +11,13 @@ import {Endpoint, extractEndpoints} from './endpoints';
 import {findEndpoint, findFixture, extract, extractVariantsFromRequest} from './matcher';
 import {Request, Response, NextFunction} from 'express';
 
-export default (fixtureDirs: string[] = [], realApiBaseUrl?: string, outputDir?: string) => {
+interface Options {
+  realApiBaseUrl?: string;
+  outputDir?: string;
+  proxyFailedResponses?: boolean;
+}
+
+export default (fixtureDirs: string[] = [], { realApiBaseUrl, outputDir, proxyFailedResponses }: Options = {}) => {
   const app = express();
   app.use((req, res, next) => {
     // needed for ajax requests from app - fetch init.credentials must be set to pass cookies with ajax
@@ -78,7 +84,7 @@ export default (fixtureDirs: string[] = [], realApiBaseUrl?: string, outputDir?:
 
   // Proxy to real API
   if (realApiBaseUrl) {
-    app.use(proxyMiddleware(realApiBaseUrl, outputDir));
+    app.use(proxyMiddleware(realApiBaseUrl, outputDir, proxyFailedResponses));
   }
 
   // Fallback path for displaying all possible endpoints

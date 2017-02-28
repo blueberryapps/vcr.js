@@ -7,7 +7,7 @@ import writeFixture from './writeFixture';
 import {IncomingMessage} from 'http';
 import {Request, Response, NextFunction, RequestHandler} from 'express';
 
-export default (realApiBaseUrl: string, outputDir?: string): RequestHandler =>
+export default (realApiBaseUrl: string, outputDir?: string, proxyFailedResponses?: boolean): RequestHandler =>
   (req: Request, res: Response, next: NextFunction): void => {
     if (req.path === '/') return next();
 
@@ -19,7 +19,8 @@ export default (realApiBaseUrl: string, outputDir?: string): RequestHandler =>
       .on('error', (e: Error) => next(e))
       .on('response', (proxyRes: IncomingMessage) => {
         // response from real API, if not OK, pass control to next
-        if (!proxyRes.statusCode || proxyRes.statusCode < 200 || proxyRes.statusCode >= 300) {
+        const isFailStatusCode = !proxyRes.statusCode || proxyRes.statusCode < 200 || proxyRes.statusCode >= 300;
+        if (!proxyFailedResponses && isFailStatusCode) {
           console.log(`${chalk.magenta('[Stub server]')} proxy request to ${chalk.yellow(realApiBaseUrl + req.path)} ended up with ${chalk.red(`${proxyRes.statusCode}`)}`);
           return next();
         }

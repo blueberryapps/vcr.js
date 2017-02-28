@@ -22,6 +22,10 @@ var argv = require('yargs')
     .alias('r', 'record')
     .describe('r', 'Record proxied responses to fixtures dir')
 
+    .boolean('proxyFailedResponses')
+    .alias('a', 'proxyFailedResponses')
+    .describe('a', 'Record and proxy response independently on status code, including 5xx, 4xx, 3xx. Nice for debug.')
+
     .default('port', 8100)
 
     .example('-f ./fixtures -p https://ur.l/base -r', 'Load fixtures from directory, proxy not found fixtures to ur.l/base and success responses record back to fixtures directory')
@@ -29,8 +33,13 @@ var argv = require('yargs')
 
 var app = express();
 var fixturesDir = path.join(process.cwd(), argv.fixturesDir);
+var options = {
+  realApiBaseUrl: argv.proxy,
+  outputDir: argv.record && fixturesDir,
+  proxyFailedResponses: argv.proxyFailedResponses,
+};
 
-app.use(server([fixturesDir], argv.proxy, argv.record && fixturesDir))
+app.use(server([fixturesDir], options))
 app.listen(argv.port, function(err) {
   if (err) {
     return console.error(err);
