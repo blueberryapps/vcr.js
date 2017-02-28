@@ -1,6 +1,6 @@
 {
   "name": "vcr.js",
-  "version": "0.4.3",
+  "version": "0.5.1",
   "license": "MIT",
   "author": {
     "email": "mmatiasko@blueberryapps.com",
@@ -16,9 +16,9 @@
     "vcr": "bin/vcr.js"
   },
   "main": "lib/index.js",
-  "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/blueberryapps/vcr.js"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/blueberryapps/vcr.js"
   },
   "scripts": {
     "start": "ts-node src/index.ts",
