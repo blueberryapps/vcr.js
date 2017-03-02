@@ -49,7 +49,7 @@ export default (fixtureDirs: string[] = [], realApiBaseUrl?: string, outputDir?:
     else if (req.query.clear)
       variants = [];
     res
-      .cookie('variants', variants.join(','))
+      .cookie('variants', variants.join(','), ({ encode: String } as express.CookieOptions))
       .json({
         variants,
         possibleVariants: extractEndpoints(listAllFixtures(fixtureDirs)).reduce((acc: string[], endpoint: Endpoint) =>

@@ -1,7 +1,6 @@
 import * as request from 'supertest';
 import server from '../server';
 import * as path from 'path';
-import { escape } from 'querystring';
 import listAllFixtures from '../listAllFixtures';
 import {emptyDirSync} from 'fs-extra';
 import {spawn, ChildProcess} from 'child_process';
@@ -146,7 +145,7 @@ describe('Stub server', () => {
       .expect(200)
       .then((res: request.Response) => {
         expect(res.body.variants).toEqual(['/foo/bar/GET.unauthorized', '/fooBar/GET.blacklisted']);
-        expect(res.header['set-cookie'][0]).toEqual(`variants=${escape('/foo/bar/GET.unauthorized,/fooBar/GET.blacklisted')}; Path=/`);
+        expect(res.header['set-cookie'][0]).toEqual(`variants=/foo/bar/GET.unauthorized,/fooBar/GET.blacklisted; Path=/`);
       });
   });
 
@@ -168,7 +167,7 @@ describe('Stub server', () => {
       .expect(200)
       .then((res: request.Response) => {
         expect(res.body.variants).toEqual(['/fooBar/GET.blacklisted', '/foo/GET.blacklisted']);
-        expect(res.header['set-cookie'][0]).toEqual(`variants=${escape('/fooBar/GET.blacklisted,/foo/GET.blacklisted')}; Path=/`);
+        expect(res.header['set-cookie'][0]).toEqual(`variants=/fooBar/GET.blacklisted,/foo/GET.blacklisted; Path=/`);
       });
   });
 
@@ -179,7 +178,7 @@ describe('Stub server', () => {
       .expect(200)
       .then((res: request.Response) => {
         expect(res.body.variants).toEqual(['/foo/bar/GET.unauthorized', '/fooBar/GET.unauthorized']);
-        expect(res.header['set-cookie'][0]).toEqual(`variants=${escape('/foo/bar/GET.unauthorized,/fooBar/GET.unauthorized')}; Path=/`);
+        expect(res.header['set-cookie'][0]).toEqual(`variants=/foo/bar/GET.unauthorized,/fooBar/GET.unauthorized; Path=/`);
 
     });
   });
