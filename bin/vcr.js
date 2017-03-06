@@ -31,7 +31,7 @@ var app = express();
 var fixturesDir = path.join(process.cwd(), argv.fixturesDir);
 
 app.use(server([fixturesDir], argv.proxy, argv.record && fixturesDir))
-app.listen(argv.port, function(err) {
+app.listen(argv.port, '0.0.0.0', function(err) {
   if (err) {
     return console.error(err);
   }
