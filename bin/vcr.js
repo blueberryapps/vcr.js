@@ -3,6 +3,9 @@ var path = require('path');
 var express = require('express');
 var chalk = require('chalk');
 var server = require('../lib/server').default;
+var canUsePort = require('../lib/canUsePort').default;
+
+var DEFAULT_PORT = 8100;
 
 var argv = require('yargs')
     .usage('Usage: \nyarn vcr -- --fixturesDir [./fixtures]')
@@ -20,18 +23,21 @@ var argv = require('yargs')
 
     .boolean('record')
     .alias('r', 'record')
+    .implies('r', 'p')
     .describe('r', 'Record proxied responses to fixtures dir')
 
-    .default('port', 8100)
+    .number('port')
+    .default('port', DEFAULT_PORT)
 
     .example('-f ./fixtures -p https://ur.l/base -r', 'Load fixtures from directory, proxy not found fixtures to ur.l/base and success responses record back to fixtures directory')
     .argv;
 
 var app = express();
 var fixturesDir = path.join(process.cwd(), argv.fixturesDir);
+var port = canUsePort(argv.port) ? argv.port : DEFAULT_PORT;
 
 app.use(server([fixturesDir], argv.proxy, argv.record && fixturesDir))
-app.listen(argv.port, '0.0.0.0', function(err) {
+app.listen(port, '0.0.0.0', function(err) {
   if (err) {
     return console.error(err);
   }
