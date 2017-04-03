@@ -31,7 +31,7 @@ const isFixture = (absolutePath: string): boolean => {
 export const listDirectoryFixtures = (basePath: string): FixturesMap =>
  walkSync(basePath)
   .filter(isFixture)
-  .reduce((acc, absolute) => ({...acc, [path.relative(basePath, absolute)]: absolute}), {});
+  .reduce((acc, absolute) => ({...acc, [path.relative(basePath, absolute).replace(/\\/g, '/')]: absolute}), {});
 
 const listAllFixtures = (dirs: string | string[]): FixturesMap =>
   ([] as string[]).concat(dirs)
