@@ -36,7 +36,7 @@ export function extractEndpoints(fixtures: FixturesMap): Endpoint[] {
 
 export function endpoint(relativePath: string, absolutePath: string): Endpoint {
   const [method, variant] = path.basename(relativePath).split('.');
-  const endpoint = `/${path.dirname(relativePath)}`;
+  const endpoint = `/${path.dirname(relativePath)}`.replace(/\\/g, '/'); // WINdows
 
   return {
     endpoint,
