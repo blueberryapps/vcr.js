@@ -289,6 +289,16 @@ describe('Stub server in proxy mode', async () => {
       });
   });
 
+  it('should proxy requests and keep query params', async () => {
+    const appserver = server(fixtureDirs, 'http://localhost:5000', outputFixturesDir);
+    await request.agent(appserver)
+      .get('/mocked?query=1')
+      .expect(200)
+      .then((res: request.Response) => {
+        expect(res.header['x-proxied-to']).toBe('http://localhost:5000/mocked?query=1');
+      });
+});
+
   it('should ', async () => {
 
   });
