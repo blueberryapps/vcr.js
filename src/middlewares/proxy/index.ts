@@ -11,7 +11,7 @@ export default (realApiBaseUrl: string, outputDir?: string): RequestHandler =>
   (req: Request, res: Response, next: NextFunction): void => {
     if (req.path === '/') return next();
 
-    const apiReqURL = `${realApiBaseUrl}${req.path}`;
+    const apiReqURL = `${realApiBaseUrl}${req.originalUrl}`;
 
     // pipe request from stub server to real API
     req
@@ -20,12 +20,12 @@ export default (realApiBaseUrl: string, outputDir?: string): RequestHandler =>
       .on('response', (proxyRes: IncomingMessage) => {
         // response from real API, if not OK, pass control to next
         if (!proxyRes.statusCode || proxyRes.statusCode < 200 || proxyRes.statusCode >= 300) {
-          console.log(`${chalk.magenta('[Stub server]')} proxy request to ${chalk.yellow(realApiBaseUrl + req.path)} ended up with ${chalk.red(`${proxyRes.statusCode}`)}`);
+          console.log(`${chalk.magenta('[Stub server]')} proxy request to ${chalk.yellow(realApiBaseUrl + req.originalUrl)} ended up with ${chalk.red(`${proxyRes.statusCode}`)}`);
           return next();
         }
 
         // response from API is OK
-        console.log(`${chalk.magenta('[Stub server]')} proxy request to ${chalk.yellow(realApiBaseUrl + req.path)} ended up with ${chalk.green(`${proxyRes.statusCode}`)} returning its response`);
+        console.log(`${chalk.magenta('[Stub server]')} proxy request to ${chalk.yellow(realApiBaseUrl + req.originalUrl)} ended up with ${chalk.green(`${proxyRes.statusCode}`)} returning its response`);
         const headers = {...proxyRes.headers, ...getProxyResponseHeaders(req, apiReqURL, outputDir)};
         res.writeHead(proxyRes.statusCode || 500, headers);
 
