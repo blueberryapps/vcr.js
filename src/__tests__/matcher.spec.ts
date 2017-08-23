@@ -3,7 +3,7 @@ import { Endpoint } from '../endpoints';
 import { Request } from 'express';
 
 interface TestCase {
-  [key: string]: string[]; 
+  [key: string]: string[];
 }
 
 const testCasesMatches: TestCase = {
@@ -46,16 +46,16 @@ const truthyWithMessage = (test: boolean, message: string): void => {
 };
 
 it('matcher matches request urls', () => {
-  Object.keys(testCasesMatches).map(pattern => 
-    testCasesMatches[pattern].map(reqPath => 
+  Object.keys(testCasesMatches).map(pattern =>
+    testCasesMatches[pattern].map(reqPath =>
       truthyWithMessage(matcher(pattern, reqPath), `Should Match: ${pattern} === ${reqPath}`)
     )
   );
 });
 
 it('matcher does not match request urls', () => {
-  Object.keys(testCasesNotMatches).map(pattern => 
-    testCasesNotMatches[pattern].map(reqPath => 
+  Object.keys(testCasesNotMatches).map(pattern =>
+    testCasesNotMatches[pattern].map(reqPath =>
       truthyWithMessage(!matcher(pattern, reqPath), `Should Not Match: ${pattern} === ${reqPath}`)
     )
   );
@@ -71,37 +71,42 @@ it('extracts params from path', () => {
 const endpoints = [
   {
     'endpoint': '/foo/1',
-    'method': 'GET', 
+    'method': 'GET',
     'variants': {
-      'default': '/absolutePat/foo/1/GET.default.json', 
+      'default': '/absolutePat/foo/1/GET.default.json',
+      'param1=foo&param2=bar': '/absolutePat/foo/1/GET.param1=foo&param2=bar.json',
       'unathorized': '/absolutePat/foo/1/GET.unathorized.json'
     }
   },
   {
     'endpoint': '/foo/{id}',
-    'method': 'GET', 
+    'method': 'GET',
     'variants': {
       'default': '/absolutePat/foo/{id}/GET.default.json'
     }
   },
   {
     'endpoint': '/foo/1',
-    'method': 'POST', 
+    'method': 'POST',
     'variants': {
       'default': '/absolutePat/foo/1/POST.default.json'
     }
   }
 ];
 
-const findTestFixture = (allEndpoints: Endpoint[], request: Request): string | null => { 
+const findTestFixture = (allEndpoints: Endpoint[], request: Request): string | null => {
   return findFixture(request, findEndpoint(allEndpoints, request));
 };
 it('should return fixture path for request', () => {
-  expect(findTestFixture(endpoints, {path: '/foo/1', method: 'GET'} as Request)).toBe('/absolutePat/foo/1/GET.default.json');  
+  expect(findTestFixture(endpoints, {path: '/foo/1', method: 'GET'} as Request)).toBe('/absolutePat/foo/1/GET.default.json');
+});
+
+it('should return fixture path for request with query', () => {
+  expect(findTestFixture(endpoints, {path: '/foo/1', query: { param2: 'bar', param1: 'foo' }, method: 'GET'} as Request)).toBe('/absolutePat/foo/1/GET.param1=foo&param2=bar.json');
 });
 
 it('should return fixture path for request with dynamic path', () => {
-  expect(findTestFixture(endpoints, {path: '/foo/10', method: 'GET'} as Request)).toBe('/absolutePat/foo/{id}/GET.default.json');  
+  expect(findTestFixture(endpoints, {path: '/foo/10', method: 'GET'} as Request)).toBe('/absolutePat/foo/{id}/GET.default.json');
 });
 
 it('should return false when fixture for request not found by method', () => {
@@ -115,13 +120,13 @@ it('should return false when fixture for request not found', () => {
 it('should return fixture variant for request', () => {
   expect(
     findTestFixture(endpoints, {path: '/foo/1', method: 'GET', cookies: {variants: '/foo/1/GET.unathorized,/foo/2/GET.other'}} as Request)
-  ).toBe('/absolutePat/foo/1/GET.unathorized.json');  
+  ).toBe('/absolutePat/foo/1/GET.unathorized.json');
 });
 
 it('should return fixture default variant for request with unknown variant', () => {
   expect(
     findTestFixture(endpoints, {path: '/foo/1', method: 'GET', cookies: {variants: '/foo/1/GET.unknown'}} as Request)
-  ).toBe('/absolutePat/foo/1/GET.default.json');  
+  ).toBe('/absolutePat/foo/1/GET.default.json');
 });
 
 const testCases = [
@@ -130,70 +135,70 @@ const testCases = [
     cookies: {variants: '/otherEndpoint/GET.unauthorized'},
     path: '/foo',
     method: 'GET',
-    variant: 'default', 
+    variant: 'default',
   },
   {
     endpoint: '/foo/{id}',
     cookies: {variants: '/foo/{id}/GET.unauthorized'},
     path: '/foo/1',
     method: 'GET',
-    variant: 'unauthorized', 
+    variant: 'unauthorized',
   },
   {
     endpoint: '/foo/1',
     cookies: {variants: '/foo/1/GET.unauthorized'},
     path: '/foo/1',
     method: 'GET',
-    variant: 'unauthorized', 
+    variant: 'unauthorized',
   },
   {
     endpoint: '/foo/{id}',
     cookies: {variants: '/foo/1/GET.unauthorized'},
     path: '/foo/1',
     method: 'GET',
-    variant: 'unauthorized', 
+    variant: 'unauthorized',
   },
   {
     endpoint: '/foo/1',
     cookies: {variants: '/foo/{id}/GET.unauthorized'},
     path: '/foo/1',
     method: 'GET',
-    variant: 'unauthorized', 
+    variant: 'unauthorized',
   },
   {
     endpoint: '/foo',
     cookies: {variants: '/foo/GET.unauthorized'},
     path: '/foo',
     method: 'GET',
-    variant: 'unauthorized', 
+    variant: 'unauthorized',
   },
   {
     endpoint: '/foo',
     cookies: {variants: '/foo/POST.unauthorized'},
     path: '/foo',
     method: 'GET',
-    variant: 'default', 
+    variant: 'default',
   },
   {
     endpoint: '/foo',
     cookies: {variants: '/foo/GET.unauthorized'},
     path: '/foo',
     method: 'POST',
-    variant: 'default', 
+    variant: 'default',
   },
   {
     endpoint: '/noVariants',
     cookies: {},
     path: '/noVariants',
     method: 'GET',
-    variant: 'default', 
+    variant: 'default',
   },
   {
     endpoint: '/staticOverDynamicSorting/{dynamic}',
     cookies: {variants: '/staticOverDynamicSorting/{dynamic}/GET.dynamic,/staticOverDynamicSorting/static/GET.static'},
     path: '/staticOverDynamicSorting/static',
     method: 'GET',
-    variant: 'static', 
+    variant: 'static',
   },
 ];
 
@@ -205,10 +210,10 @@ const equalWithMessage = (test: string, result: string, message: string): void =
 it('extractVariant returns correct variant', () => {
   testCases.map(({endpoint, cookies, path, method, variant}) => {
     const result = extractVariant({ endpoint } as Endpoint, {cookies, path, method} as Request);
-    
+
     equalWithMessage(
-      result, 
-      variant, 
+      result,
+      variant,
       `testing: ${path}/${method} should return ${variant} but got ${result} COOKIES: ${JSON.stringify(cookies)}`
     );
   });

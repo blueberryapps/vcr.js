@@ -48,6 +48,13 @@ describe('Stub server', () => {
             }
           },
           {
+            endpoint: '/cnx-gbl-org-quality/qa/v1/dm/jobsites',
+            method: 'GET',
+            variants: {
+              'page=5&size=10': path.join(__dirname, 'fixtures/cnx-gbl-org-quality/qa/v1/dm/jobsites/GET.page=5&size=10.json'),
+            }
+          },
+          {
             endpoint: '/cnx-gbl-org-quality/qa/v1/dm/jobsites/{id}',
             method: 'GET',
             variants: {
@@ -89,6 +96,13 @@ describe('Stub server', () => {
             }
           },
           {
+            endpoint: '/cnx-gbl-org-quality/qa/v1/dm/jobsites',
+            method: 'GET',
+            variants: {
+              'page=5&size=10': path.join(__dirname, 'fixtures/cnx-gbl-org-quality/qa/v1/dm/jobsites/GET.page=5&size=10.json'),
+            }
+          },
+          {
             endpoint: '/cnx-gbl-org-quality/qa/v1/dm/jobsites/{id}',
             method: 'GET',
             variants: {
@@ -104,6 +118,13 @@ describe('Stub server', () => {
       .get('/cnx-gbl-org-quality/qa/v1/dm/jobsites/10')
       .expect(200)
       .then((res: request.Response) => expect(res.body).toEqual({id: '10'}));
+  });
+
+  it('should return fixture based on url params', async () => {
+    await request(app)
+      .get('/cnx-gbl-org-quality/qa/v1/dm/jobsites?size=10&page=5')
+      .expect(200)
+      .then((res: request.Response) => expect(res.body).toEqual({jobsites: [{id:1}, {id: 2}, {id: 3}]}));
   });
 
   it('should return error when error in fixture', async () => {
@@ -132,6 +153,7 @@ describe('Stub server', () => {
       .then((res: request.Response) =>
         expect(res.body.possibleVariants).toEqual([
           '/cnx-gbl-org-quality/qa/v1/dm/jobsites/1/GET.default',
+          '/cnx-gbl-org-quality/qa/v1/dm/jobsites/GET.page=5&size=10',
           '/cnx-gbl-org-quality/qa/v1/dm/jobsites/{id}/GET.default',
           '/cnx-gbl-org-quality/qa/v1/dtm/events/GET.default'
         ])
@@ -297,9 +319,5 @@ describe('Stub server in proxy mode', async () => {
       .then((res: request.Response) => {
         expect(res.header['x-proxied-to']).toBe('http://localhost:5000/mocked?query=1');
       });
-});
-
-  it('should ', async () => {
-
   });
 });

@@ -2,6 +2,7 @@ import * as path from 'path';
 import {Endpoint} from './endpoints';
 import {named} from 'named-regexp';
 import {Request} from 'express';
+import {encodeUrlParams} from './encodeUrlParams';
 
 interface Params { [key: string]: string; }
 
@@ -30,6 +31,14 @@ export function extractVariantsFromRequest(req: Request): string[] {
   return ((req.cookies || {}).variants || '').split(',').sort();
 }
 export function extractVariant(foundEndpoint: Endpoint, req: Request): string {
+
+  if (req.query && Object.keys(req.query).length > 0) {
+    const queryVariant = encodeUrlParams(req.query);
+    if (Object.keys(foundEndpoint.variants).indexOf(queryVariant) !== -1) {
+      return queryVariant;
+    }
+  }
+
   // endpoint      /foo/{id}
   // cookieVariant /foo/{id}/GET.variantName
   return extractVariantsFromRequest(req)

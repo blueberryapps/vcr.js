@@ -29,6 +29,19 @@ const testCases = [
   },
   {
     input: {
+      relative: 'foo/1/GET.param1=foo&param2=bar.json',
+      absolute: '/absolutePat/foo/1/GET.param1=foo&param2=bar.json'
+    },
+    output: {
+      endpoint: '/foo/1',
+      method: 'GET',
+      variants: {
+        'param1=foo&param2=bar': '/absolutePat/foo/1/GET.param1=foo&param2=bar.json'
+      }
+    }
+  },
+  {
+    input: {
       relative: 'foo/1/POST.default.json',
       absolute: '/absolutePat/foo/1/POST.default.json'
     },
@@ -56,7 +69,7 @@ const testCases = [
 ];
 
 it('should convert fixture to endpoint', () => {
-  testCases.map(testCase => 
+  testCases.map(testCase =>
   expect(endpoints.endpoint(testCase.input.relative, testCase.input.absolute))
     .toEqual(testCase.output));
 });
@@ -69,15 +82,15 @@ it('should convert fixtures to endpoints', () => {
   })).toEqual([
     {
       'endpoint': '/foo/1',
-      'method': 'GET', 
+      'method': 'GET',
       'variants': {
-        'default': '/absolutePat/foo/1/GET.default.json', 
+        'default': '/absolutePat/foo/1/GET.default.json',
         'unathorized': '/absolutePat/foo/1/GET.unathorized.json'
       }
     },
     {
       'endpoint': '/foo/1',
-      'method': 'POST', 
+      'method': 'POST',
       'variants': {
         'default': '/absolutePat/foo/1/POST.default.json'
       }

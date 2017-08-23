@@ -47,6 +47,19 @@ In general form:
 {fixturesDir}/{endpointPath}/{method}.{variant}.(json|js)
 ```
 
+With url query parameters (in variant name params must be sorted alphabetically, also encoded by `encodeURIComponent`):
+```
+{fixturesDir}/{endpointPath}/{method}.param1=value&param2=value.(json|js)
+```
+
+### Example:
+
+When accessing `http://localhost:8100/api/v1/users?page=1&limit=10` it will ty to look for fixture:
+
+```
+{fixturesDir}/{endpointPath}/GET.limit=10&page=1.(json|js)
+```
+
 ### Dynamic route params
 To match an endpoint with dynamic params, use `{dynamicParam}` as the directory name.
 If you would like to get the same response from both `GET /users/1` and `GET /users/42`,
