@@ -53,12 +53,13 @@ If you would like to get the same response from both `GET /users/1` and `GET /us
 create a file with the name `{fixturesDir}/users/{id}/GET.default.json` and you can reuse your fixture file for all users!
 As a bonus you can access these params in fixtures and customize the response by using a `.js` fixture (described below).
 
-
 ### Custom responses of a single endpoint - Variants
 What if you wanted to customize the response of a single endpoint?
 Just set a `variants` cookies with a list of desired variants separated by comma as the value, e.g.
 `/api/v1/users/{id}/GET.variantName,/api/v1/projects/POST.otherVariant`
 Stub server will find the corresponding cookie variant matching the request path and provide you with the correct fixture.
+
+or you can also visit `/variants` in browsers and use `/variants?add=XXX` to add multiple variants to existing setup, `/variants?set=XXX` to override variants and set given values, `/variants?clear=t` to remove all variants from cookie
 
 ### What fixture types are handled?
 Currently supported fixture types are `.json` and `.js`. JS fixtures are basically handlers as you know them from expressjs/node.
