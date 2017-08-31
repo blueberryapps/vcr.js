@@ -43,7 +43,8 @@ describe('listAllFixtures()', () => {
       .toEqual({
         'dm/jobsites/1/GET.default.json': path.join(__dirname, baseDir, 'dm/jobsites/1/GET.default.json'),
         'dm/jobsites/{id}/GET.default.js': path.join(__dirname, baseDir, 'dm/jobsites/{id}/GET.default.js'),
-        'dtm/events/GET.default.json': path.join(__dirname, baseDir, 'dtm/events/GET.default.json')
+        'dtm/events/GET.default.json': path.join(__dirname, baseDir, 'dtm/events/GET.default.json'),
+        'dm/jobsites/GET.page=5&size=10.json': path.join(__dirname, baseDir, 'dm/jobsites/GET.page=5&size=10.json')
       });
   });
 
