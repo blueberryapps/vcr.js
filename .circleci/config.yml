@@ -19,10 +19,8 @@ jobs:
       - deploy:
           name: publish to npmjs.com
           command: |
-            if [ "${CIRCLE_BRANCH}" == "circleci2" ]; then
-              npm config set //registry.npmjs.org/:_authToken=$NPM_TOKEN
-              scripts/publish
-            fi
+            npm config set //registry.npmjs.org/:_authToken=$NPM_TOKEN
+            scripts/publish
   build-node6:
     docker:
       - image: node:6
