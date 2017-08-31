@@ -16,24 +16,16 @@ jobs:
             - ./node_modules
       - run: yarn tslint
       - run: yarn test
-  publish:
-    docker:
-      - image: node:8
-    working_directory: ~/w
-    steps:
-     - checkout
-     - deploy:
-          name: Publish to npm.org
-          command: ls -l
+      - deploy:
+          name: publish to npmjs.com
+          command: |
+            if [ "${CIRCLE_BRANCH}" == "circleci2" ]; then
+              ls -l
+              ./publish
+            fi
 
 workflows:
   version: 2
   build:
     jobs:
       - build-node8
-      - publish:
-          requires:
-            - build-node8
-          filters:
-            branches:
-              only: circleci2
