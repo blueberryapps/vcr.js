@@ -5,8 +5,7 @@ Mock server with Proxy and Record support inspired by ruby VCR.
 ## tl;dr
 ```
 yarn add vcr.js
-mkdir fixtures
-mkdir fixtures/users
+mkdir -p fixtures/users
 echo '{"users": ["Tim", "Tom"]}' > ./fixtures/users/GET.default.json
 yarn vcr -- -f ./fixtures
 ```
@@ -78,7 +77,7 @@ or you can also visit `/variants` in browsers and use `/variants?add=XXX` to add
 Currently supported fixture types are `.json` and `.js`. JS fixtures are basically handlers as you know them from expressjs/node.
 A simple template for a `.js` fixture:
 ```
-module.exports = (req, res, next) {
+module.exports = (req, res, next) => {
   res.status(400).json({error: 'Bad request :D'});
 };
 ```
@@ -99,14 +98,9 @@ With the `record_fixture_variant=blacklistedUser` cookie the recorded fixtures w
 ## Development
 
 ```console
-# tests
-$ yarn test
-
-# tslint
-$ yarn tslint
-
-# start
-$ yarn start
+yarn test
+yarn tslint
+yarn start
 ```
 
 ## Made with love by
