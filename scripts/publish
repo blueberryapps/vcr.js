@@ -28,10 +28,7 @@ tempLog=$(mktemp)
 package=$(packageJsonName $packageDir)
 packageVersion=$(packageJsonVersion $packageDir)
 
-echo $package
-exit
-
-#npm publish > ${tempLog} 2>&1
+npm publish > ${tempLog} 2>&1
 
 if [ $? -eq 0 ]; then
   echo ">> Package '$package@$packageVersion' has been successfully published!"
