@@ -124,7 +124,7 @@ describe('Stub server', () => {
     await request(app)
       .get('/cnx-gbl-org-quality/qa/v1/dm/jobsites?size=10&page=5')
       .expect(200)
-      .then((res: request.Response) => expect(res.body).toEqual({jobsites: [{id:1}, {id: 2}, {id: 3}]}));
+      .then((res: request.Response) => expect(res.body).toEqual({jobsites: [{id: 1}, {id: 2}, {id: 3}]}));
   });
 
   it('should return error when error in fixture', async () => {

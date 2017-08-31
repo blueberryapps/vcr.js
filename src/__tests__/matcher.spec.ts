@@ -102,7 +102,7 @@ it('should return fixture path for request', () => {
 });
 
 it('should return fixture path for request with query', () => {
-  expect(findTestFixture(endpoints, {path: '/foo/1', query: { param2: 'bar', param1: 'foo' }, method: 'GET'} as Request)).toBe('/absolutePat/foo/1/GET.param1=foo&param2=bar.json');
+  expect(findTestFixture(endpoints, {path: '/foo/1', query: { param2: 'bar', param1: 'foo' }, method: 'GET'} as Request)).toBe('/absolutePat/foo/1/GET.param1=foo&param2=bar.json');
 });
 
 it('should return fixture path for request with dynamic path', () => {
