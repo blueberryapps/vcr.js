@@ -9,7 +9,7 @@ version=$(grep -m1 version package.json | awk -F: '{ print $2 }' | sed 's/[", ]/
 tempLog=$(mktemp)
 
 echo "Trying to publish..."
-npm publish > ${tempLog} 2>&1
+#npm publish > ${tempLog} 2>&1
 
 if [ $? -eq 0 ]; then
   curl -H "Content-Type: application/json" \
