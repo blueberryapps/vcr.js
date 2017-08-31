@@ -20,8 +20,8 @@ jobs:
           name: publish to npmjs.com
           command: |
             if [ "${CIRCLE_BRANCH}" == "circleci2" ]; then
-              ls -l
-              ./publish
+              npm config set //registry.npmjs.org/:_authToken=$NPM_TOKEN
+              scripts/publish
             fi
   build-node6:
     docker:
