@@ -36,4 +36,4 @@ workflows:
             - build-node8
           filters:
             branches:
-              only: master
+              only: circleci2
