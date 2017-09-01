@@ -18,9 +18,7 @@ jobs:
       - run: yarn test
       - deploy:
           name: publish to npmjs.com
-          command: |
-            npm config set //registry.npmjs.org/:_authToken=$NPM_TOKEN
-            scripts/publish
+          command: scripts/publish
   build-node6:
     docker:
       - image: node:6

@@ -28,11 +28,12 @@ tempLog=$(mktemp)
 package=$(packageJsonName $packageDir)
 packageVersion=$(packageJsonVersion $packageDir)
 
+npm config set //registry.npmjs.org/:_authToken=$NPM_TOKEN
 npm publish > ${tempLog} 2>&1
 
 if [ $? -eq 0 ]; then
   echo ">> Package '$package@$packageVersion' has been successfully published!"
-  notify $package $version
+  notify $package $packageVersion
 else
   # npm publish action is idempotent
   grep -q "npm ERR! code E403" ${tempLog}
