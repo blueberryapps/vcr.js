@@ -16,6 +16,8 @@ jobs:
             - ./node_modules
       - run: yarn tslint
       - run: yarn test
+      - run: yarn cleanupBuild
+      - run: yarn compile
       - deploy:
           name: publish to npmjs.com
           command: scripts/publish
@@ -35,6 +37,8 @@ jobs:
             - ./node_modules
       - run: yarn tslint
       - run: yarn test
+      - run: yarn cleanupBuild
+      - run: yarn compile
 
 workflows:
   version: 2
