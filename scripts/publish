@@ -28,7 +28,8 @@ tempLog=$(mktemp)
 package=$(packageJsonName $packageDir)
 packageVersion=$(packageJsonVersion $packageDir)
 
-npm config set //registry.npmjs.org/:_authToken=$NPM_TOKEN
+# suppress (token is not printed)
+npm config set //registry.npmjs.org/:_authToken=$NPM_TOKEN > /dev/null 2>&1
 npm publish > ${tempLog} 2>&1
 
 if [ $? -eq 0 ]; then
