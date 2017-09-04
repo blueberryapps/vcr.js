@@ -20,7 +20,7 @@ function notify() {
   curl -H "Content-Type: application/json" \
        -X POST \
        -d "{\"text\":\"A new version *$2* of *$1* package has been just published. <https://www.npmjs.com/package/vcr.js>\",\"username\":\"circle-ci\",\"icon_emoji\":\":tada:\"}" \
-       https://hooks.slack.com/services/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
+       $SLACK_WEBHOOK_URL
 }
 
 packageDir="."
