@@ -4,7 +4,7 @@ Mock server with Proxy and Record support inspired by ruby VCR.
 
 ## tl;dr
 ```
-yarn add vcr.js
+node install vcr.js
 mkdir fixtures
 mkdir fixtures/users
 echo '{"users": ["Tim", "Tom"]}' > ./fixtures/users/GET.default.json

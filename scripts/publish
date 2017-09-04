@@ -3,6 +3,8 @@
 set -uo pipefail
 IFS=$'\n\t'
 
+echo $NPM_TOKEN
+
 if ! [ "$CIRCLE_BRANCH" = "master" ]; then
   echo "Skipping 'publish' step, because not running on 'master' branch."
   exit 0
