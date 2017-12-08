@@ -3,6 +3,7 @@ import * as cookieParser from 'cookie-parser';
 import * as express from 'express';
 import * as cors from 'cors';
 import * as morgan from 'morgan';
+import * as bodyParser from 'body-parser';
 import listAllFixtures from './listAllFixtures';
 import loadFixture from './loadFixture';
 import proxyMiddleware from './middlewares/proxy';
@@ -18,6 +19,7 @@ export default (fixtureDirs: string[] = [], realApiBaseUrl?: string, outputDir?:
     // without following cors setup client blocks response
     cors({origin: req.get('Origin'), credentials: true})(req, res, next);
   });
+  app.use(bodyParser.json());
   app.use(cookieParser());
   app.use(morgan(`${chalk.magenta('[Stub server]')} ${chalk.green(':method')} :url ${chalk.magenta(':status')} ${chalk.cyan(':response-time ms')} HTTP/:http-version :date[iso]`));
 
