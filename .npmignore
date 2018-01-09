@@ -4,3 +4,5 @@ yarn*.log
 .DS_Store
 dist
 scripts
+src/fixtures
+src/__tests__
