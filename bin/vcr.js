@@ -21,6 +21,10 @@ var argv = require('yargs')
     .describe('p', 'URL to real API')
     .nargs('p', 1)
 
+    .boolean('local_variants')
+    .alias('l', 'local_variants')
+    .describe('l', 'Variant are store in local memory of vcr and then works for all requests without cookie need. (be aware of paralel usage)')
+
     .boolean('record')
     .alias('r', 'record')
     .implies('r', 'p')
@@ -35,6 +39,10 @@ var argv = require('yargs')
 var app = express();
 var fixturesDir = path.join(process.cwd(), argv.fixturesDir);
 var port = canUsePort(argv.port) ? argv.port : DEFAULT_PORT;
+
+if (argv.local_variants) {
+  process.env.STORE_VARIANTS_LOCALY = true;
+}
 
 app.use(server([fixturesDir], argv.proxy, argv.record && fixturesDir))
 app.listen(port, '0.0.0.0', function(err) {

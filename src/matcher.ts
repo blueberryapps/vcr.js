@@ -3,6 +3,7 @@ import {Endpoint} from './endpoints';
 import {named} from 'named-regexp';
 import {Request} from 'express';
 import {encodeUrlParams} from './encodeUrlParams';
+import {getLocalVariants} from './variantsLocalStore';
 
 interface Params { [key: string]: string; }
 
@@ -28,7 +29,9 @@ export function extract(pattern: string, path: string): Params {
 }
 
 export function extractVariantsFromRequest(req: Request): string[] {
-  return ((req.cookies || {}).variants || '').split(',').sort();
+  const cookieVariants = ((req.cookies || {}).variants || '').split(',').sort();
+  const localVariants = getLocalVariants();
+  return cookieVariants.length > 0 ? cookieVariants : (localVariants || []);
 }
 export function extractVariant(foundEndpoint: Endpoint, req: Request): string {
 

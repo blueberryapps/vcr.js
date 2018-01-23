@@ -4,6 +4,7 @@ import * as path from 'path';
 import decompress from './decompress';
 import {IncomingMessage} from 'http';
 import {NextFunction} from 'express';
+// import * as prettyjson from 'prettyjson';
 
 // const outputPath = path.join(outputDir, req.path);
 export default function writeFixture(fullPath: string, proxyRes: IncomingMessage, next: NextFunction) {
@@ -17,13 +18,15 @@ export default function writeFixture(fullPath: string, proxyRes: IncomingMessage
     const write$ = fs.createWriteStream(fullPath);
     write$.on('error', (e: Error) => {console.log('write$ error'); next(e); });
     // write$.on('close', () => {console.log('write$ close')})
+    // const asd = prettyjson.render(proxyRes, { noColor: true });
 
     proxyRes
       .pipe(decompress(proxyRes.headers['content-encoding']))
       .pipe(write$);
+    console.log('_______', proxyRes)
 
   } catch (e) {
-    console.error(`[Stub server] fixture from api NOT written at path ${fullPath}`);
+    console.error(`[Stub server] fixture from api NOT written at path ${fullPath}, error: ${e}`);
     next(e);
   }
 }

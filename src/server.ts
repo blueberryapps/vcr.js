@@ -11,6 +11,8 @@ import {cleanupVariantsConflicts} from './variants';
 import {Endpoint, extractEndpoints} from './endpoints';
 import {findEndpoint, findFixture, extract, extractVariantsFromRequest} from './matcher';
 import {Request, Response, NextFunction} from 'express';
+import {setVariantsLocaly, getLocalVariants} from './variantsLocalStore';
+import delayMiddleware from './middlewares/delayMiddleware';
 
 export default (fixtureDirs: string[] = [], realApiBaseUrl?: string, outputDir?: string) => {
   const app = express();
@@ -22,6 +24,7 @@ export default (fixtureDirs: string[] = [], realApiBaseUrl?: string, outputDir?:
   app.use(bodyParser.json());
   app.use(cookieParser());
   app.use(morgan(`${chalk.magenta('[Stub server]')} ${chalk.green(':method')} :url ${chalk.magenta(':status')} ${chalk.cyan(':response-time ms')} HTTP/:http-version :date[iso]`));
+  app.use(delayMiddleware());
 
   console.log(`${chalk.magenta('[Stub server]')} looking for fixtures in:`);
   console.log(chalk.yellow(fixtureDirs.join(',')));
@@ -50,6 +53,11 @@ export default (fixtureDirs: string[] = [], realApiBaseUrl?: string, outputDir?:
       variants = cleanupVariantsConflicts(variants.concat(req.query.add.split(',')));
     else if (req.query.clear)
       variants = [];
+    else
+      variants = getLocalVariants() || [];
+
+    setVariantsLocaly(variants);
+
     res
       .cookie('variants', variants.join(','), ({ encode: String } as express.CookieOptions))
       .json({
