@@ -338,4 +338,24 @@ describe('Stub server in proxy mode', async () => {
         expect(res.header['x-proxied-to']).toBe('http://localhost:5000/mocked?query=1');
       });
   });
+
+  it('should save correctly decoded fixture to fixturePath for POST request ', async () => {
+    const appserver = server(fixtureDirs, 'http://localhost:5000', outputFixturesDir);
+
+    await request.agent(appserver)
+      .post('/mocked')
+      .send({ bodyProp: 42 })
+      .expect(200)
+      .then((res: request.Response) => {
+        const fixturesMap = listAllFixtures(outputFixturesDir);
+        expect(Object.keys(fixturesMap).length).toBe(1);
+
+        const fixtureName = Object.keys(fixturesMap)[0];
+        const fixturePath = fixturesMap[fixtureName];
+        const fixture = require(fixturePath);
+        expect(fixtureName.search(/POST/) > -1).toBeTruthy();
+        expect(fixture.bodyProp).toBe(42);
+      });
+  });
+
 });

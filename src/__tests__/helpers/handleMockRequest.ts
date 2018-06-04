@@ -50,13 +50,19 @@ const assembleHeaders = (encoding: string) => {
   };
 };
 
-export default function(req: Request, res: Response): void {
+export default async function(req: Request, res: Response) {
   const statusCode = parseInt(req.headers[HEADERS.STATUS], 10) || 200;
-  const {encoder, encoding} = parseEncoding(req.headers['accept-encoding']);
-  const json$ = getJson$(statusCode);
-  const encoded$: Stream.Transform = json$.pipe(encoder);
 
-  res.writeHead(statusCode, assembleHeaders(encoding));
-  encoded$.pipe(res);
+  if (req.method === 'POST') {
+    res.writeHead(statusCode, { 'Content-Type': 'application/json' });
+    req.pipe(res);
+  } else {
+    const { encoder, encoding } = parseEncoding(req.headers['accept-encoding']);
+    const json$ = getJson$(statusCode);
+    const encoded$: Stream.Transform = json$.pipe(encoder);
+
+    res.writeHead(statusCode, assembleHeaders(encoding));
+    encoded$.pipe(res);
+  }
   // encoded$.pipe(process.stdout);
 }

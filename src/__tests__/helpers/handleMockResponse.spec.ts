@@ -61,4 +61,15 @@ describe('Real api mock server', async () => {
         expect(res.body.message).toBe('not found');
       });
   });
+
+  it('should mirror request body for POST', async () => {
+    await request.agent(realApiServer)
+      .post('/mocked')
+      .send({ bodyProp: 42 })
+      .set(HEADERS.STATUS, '200')
+      .expect(200)
+      .then((res: request.Response) => {
+        expect(res.body).toEqual({bodyProp: 42});
+      });
+  });
 });
