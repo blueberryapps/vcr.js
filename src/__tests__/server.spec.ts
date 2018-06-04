@@ -2,8 +2,8 @@ import * as request from 'supertest';
 import server from '../server';
 import * as path from 'path';
 import listAllFixtures from '../listAllFixtures';
-import {emptyDirSync} from 'fs-extra';
-import {spawn, ChildProcess} from 'child_process';
+import { emptyDirSync } from 'fs-extra';
+import { spawn, ChildProcess } from 'child_process';
 import * as BluebirdPromise from 'bluebird';
 import kill from './helpers/killProcessTree';
 
@@ -11,7 +11,7 @@ let mockServer: ChildProcess;
 
 beforeAll(async () => {
   if (mockServer) return;
-  mockServer = spawn('yarn', ['ts-node', '--', 'src/__tests__/helpers/server.ts'], {stdio: [0, 1, 2]});
+  mockServer = spawn('yarn', ['ts-node', '--', 'src/__tests__/helpers/server.ts'], { stdio: [0, 1, 2] });
   console.log('Started mock server process, PID: ', mockServer.pid);
   await BluebirdPromise.delay(3000);
 });
@@ -117,14 +117,14 @@ describe('Stub server', () => {
     await request(app)
       .get('/cnx-gbl-org-quality/qa/v1/dm/jobsites/10')
       .expect(200)
-      .then((res: request.Response) => expect(res.body).toEqual({id: '10'}));
+      .then((res: request.Response) => expect(res.body).toEqual({ id: '10' }));
   });
 
   it('should return fixture based on url params', async () => {
     await request(app)
       .get('/cnx-gbl-org-quality/qa/v1/dm/jobsites?size=10&page=5')
       .expect(200)
-      .then((res: request.Response) => expect(res.body).toEqual({jobsites: [{id: 1}, {id: 2}, {id: 3}]}));
+      .then((res: request.Response) => expect(res.body).toEqual({ jobsites: [{ id: 1 }, { id: 2 }, { id: 3 }] }));
   });
 
   it('should return error when error in fixture', async () => {
@@ -202,7 +202,7 @@ describe('Stub server', () => {
         expect(res.body.variants).toEqual(['/foo/bar/GET.unauthorized', '/fooBar/GET.unauthorized']);
         expect(res.header['set-cookie'][0]).toEqual(`variants=/foo/bar/GET.unauthorized,/fooBar/GET.unauthorized; Path=/`);
 
-    });
+      });
   });
 
   it('should pass GET not matched request by proxy real api', async () => {
@@ -231,33 +231,33 @@ describe('Stub server in proxy mode', async () => {
   });
 
   it('should proxy requests and keep correct encoding - gzip', async () => {
-      const appserver = server(fixtureDirs, 'http://localhost:5000', outputFixturesDir);
-      await request.agent(appserver)
-        .get('/mocked')
-        .set('accept-encoding', 'gzip')
-        .expect(200)
-        .expect('content-encoding', 'gzip')
-        .then((res: request.Response) => { });
+    const appserver = server(fixtureDirs, 'http://localhost:5000', outputFixturesDir);
+    await request.agent(appserver)
+      .get('/mocked')
+      .set('accept-encoding', 'gzip')
+      .expect(200)
+      .expect('content-encoding', 'gzip')
+      .then((res: request.Response) => { });
   });
 
   it('should proxy requests and keep correct encoding - deflate', async () => {
-      const appserver = server(fixtureDirs, 'http://localhost:5000', outputFixturesDir);
-      await request.agent(appserver)
-        .get('/mocked')
-        .set('accept-encoding', 'deflate')
-        .expect(200)
-        .expect('content-encoding', 'deflate')
-        .then((res: request.Response) => { });
+    const appserver = server(fixtureDirs, 'http://localhost:5000', outputFixturesDir);
+    await request.agent(appserver)
+      .get('/mocked')
+      .set('accept-encoding', 'deflate')
+      .expect(200)
+      .expect('content-encoding', 'deflate')
+      .then((res: request.Response) => { });
   });
 
   it('should proxy requests and keep correct encoding - gzip, deflate', async () => {
-      const appserver = server(fixtureDirs, 'http://localhost:5000', outputFixturesDir);
-      await request.agent(appserver)
-        .get('/mocked')
-        .set('accept-encoding', 'deflate, gzip')
-        .expect(200)
-        .expect('content-encoding', 'deflate')
-        .then((res: request.Response) => { });
+    const appserver = server(fixtureDirs, 'http://localhost:5000', outputFixturesDir);
+    await request.agent(appserver)
+      .get('/mocked')
+      .set('accept-encoding', 'deflate, gzip')
+      .expect(200)
+      .expect('content-encoding', 'deflate')
+      .then((res: request.Response) => { });
   });
 
   it('should save correctly decoded fixture to fixturePath ', async () => {
@@ -307,6 +307,24 @@ describe('Stub server in proxy mode', async () => {
         const fixturePath = fixturesMap[fixtureName];
         const fixture = require(fixturePath);
         expect(fixtureName.search(/someVariant/) > -1).toBeTruthy();
+        expect(fixture.answer).toBe(42);
+      });
+  });
+
+  it('should proxy and save variant derived from request query when no variant specified in cookie', async () => {
+    const appserver = server(fixtureDirs, 'http://localhost:5000', outputFixturesDir);
+
+    await request.agent(appserver)
+      .get('/mocked?size=10&page=3')
+      .expect(200)
+      .then((res: request.Response) => {
+        const fixturesMap = listAllFixtures(outputFixturesDir);
+        expect(Object.keys(fixturesMap).length).toBe(1);
+
+        const fixtureName = Object.keys(fixturesMap)[0];
+        const fixturePath = fixturesMap[fixtureName];
+        const fixture = require(fixturePath);
+        expect(fixtureName.search(/page=3&size=10/) > -1).toBeTruthy();
         expect(fixture.answer).toBe(42);
       });
   });
