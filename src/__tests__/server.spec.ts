@@ -120,6 +120,14 @@ describe('Stub server', () => {
       .then((res: request.Response) => expect(res.body).toEqual({ id: '10' }));
   });
 
+  it('should parse body for js fixture', async () => {
+    await request(app)
+      .post('/custom')
+      .send({ arr: [1, 2, 3]})
+      .expect(200)
+      .then((res: request.Response) => expect(res.body).toEqual({ arrLength: 3 }));
+  });
+
   it('should return fixture based on url params', async () => {
     await request(app)
       .get('/cnx-gbl-org-quality/qa/v1/dm/jobsites?size=10&page=5')
