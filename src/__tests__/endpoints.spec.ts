@@ -42,6 +42,19 @@ const testCases = [
   },
   {
     input: {
+      relative: 'foo/1/GET.param1=1.1&param2=2.2.json',
+      absolute: '/absolutePat/foo/1/GET.param1=1.1&param2=2.2.json'
+    },
+    output: {
+      endpoint: '/foo/1',
+      method: 'GET',
+      variants: {
+        'param1=1.1&param2=2.2': '/absolutePat/foo/1/GET.param1=1.1&param2=2.2.json'
+      }
+    }
+  },
+  {
+    input: {
       relative: 'foo/1/POST.default.json',
       absolute: '/absolutePat/foo/1/POST.default.json'
     },
