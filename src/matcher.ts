@@ -13,7 +13,7 @@ export function convertEndpointToPatternMatcher(endpoint: string): string {
 }
 
 export default function matcher(pattern: string, path: string): boolean {
-  return named(new RegExp(`^${convertEndpointToPatternMatcher(pattern)}$`)).test(path);
+  return named(new RegExp(`^${convertEndpointToPatternMatcher(pattern)}[\/]?$`)).test(path);
 }
 
 export function extract(pattern: string, path: string): Params {
