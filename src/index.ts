@@ -6,6 +6,9 @@ import server from './server';
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Disable caching of all responses
+app.set('etag', false);
+
 // const realApiUrl = 'https://js-developer-second-round.herokuapp.com/api/v1';
 const realApiUrl = 'http://localhost:5000';
 
