@@ -215,6 +215,17 @@ describe('Stub server', () => {
         expect(res.body[0].username).toEqual('Bret'); // should return id 1 for first user
       });
   });
+
+  it('should use fixturesDir specified in casette cookie', async () => {
+    const casetteDir = path.join(__dirname, 'customCasette');
+    await request.agent(app)
+      .get('/very-different')
+      .set('Cookie', `casette=${casetteDir}`)
+      .expect(200)
+      .then((res: request.Response) => {
+        expect(res.body).toEqual({name: 'Forrest'});
+      });
+  });
 });
 
 describe('Stub server in proxy mode', async () => {
