@@ -57,7 +57,7 @@ export default (fixtureDirs: string[] = [], realApiBaseUrl?: string, outputDir?:
           acc.concat(
             Object.keys(endpoint.variants).map(variant => `${endpoint.endpoint}/${endpoint.method}.${variant}`)
           )
-        ,                                                                       [])
+        ,                                                                                             [])
       });
   });
 

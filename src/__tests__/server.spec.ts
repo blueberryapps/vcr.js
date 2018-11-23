@@ -2,7 +2,7 @@ import * as request from 'supertest';
 import server from '../server';
 import * as path from 'path';
 import listAllFixtures from '../listAllFixtures';
-import { emptyDirSync } from 'fs-extra';
+import { emptyDirSync, removeSync } from 'fs-extra';
 import { spawn, ChildProcess } from 'child_process';
 import * as BluebirdPromise from 'bluebird';
 import kill from './helpers/killProcessTree';
@@ -340,6 +340,24 @@ describe('Stub server in proxy mode', async () => {
       });
   });
 
+  it('should proxy and save fixture to custom casette', async () => {
+    const casetteDir = path.join(__dirname, 'empty-vhs');
+    const appserver = server([casetteDir], 'http://localhost:5000', casetteDir);
+
+    await request.agent(appserver)
+      .get('/mocked-vhs')
+      .set('Cookie', `casette=${casetteDir}`)
+      .expect(200)
+      .then((res: request.Response) => {
+        const fixture = require(path.join(casetteDir, 'mocked-vhs', 'GET.default.json'));
+
+        expect(res.body.answer).toBe(42);
+        expect(fixture.answer).toBe(42);
+      });
+    
+    removeSync(casetteDir);
+  });
+
   it('should proxy requests and keep query params', async () => {
     const appserver = server(fixtureDirs, 'http://localhost:5000', outputFixturesDir);
     await request.agent(appserver)
@@ -368,5 +386,4 @@ describe('Stub server in proxy mode', async () => {
         expect(fixture.bodyProp).toBe(42);
       });
   });
-
 });
