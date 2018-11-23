@@ -67,8 +67,14 @@ describe('Stub server', () => {
             variants: {
               default: path.join(__dirname, 'fixtures/cnx-gbl-org-quality/qa/v1/dtm/events/GET.default.json')
             }
-          }
-
+          },
+          {
+            endpoint: '/express-handler',
+            method: 'POST',
+            variants: {
+              default: path.join(__dirname, 'fixtures/express-handler/POST.default.js')
+            }
+          },
         ]);
       })
   );
@@ -155,7 +161,8 @@ describe('Stub server', () => {
           '/cnx-gbl-org-quality/qa/v1/dm/jobsites/1/GET.default',
           '/cnx-gbl-org-quality/qa/v1/dm/jobsites/GET.page=5&size=10',
           '/cnx-gbl-org-quality/qa/v1/dm/jobsites/{id}/GET.default',
-          '/cnx-gbl-org-quality/qa/v1/dtm/events/GET.default'
+          '/cnx-gbl-org-quality/qa/v1/dtm/events/GET.default',
+          '/express-handler/POST.default',
         ])
       );
   });
@@ -224,6 +231,17 @@ describe('Stub server', () => {
       .expect(200)
       .then((res: request.Response) => {
         expect(res.body).toEqual({name: 'Forrest'});
+      });
+  });
+
+  it('should parse body for POST js fixtures', async () => {
+    await request.agent(app)
+      .post('/express-handler')
+      .send({ parsed: {num: 42} })
+      .set('Accept', 'application/json')
+      .expect(200)
+      .then((res: request.Response) => {
+        expect(res.body).toEqual({num: 42});
       });
   });
 });

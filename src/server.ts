@@ -10,7 +10,9 @@ import {cleanupVariantsConflicts} from './variants';
 import {Endpoint, extractEndpoints} from './endpoints';
 import getFixturesDirs from './getFixturesDirs';
 import {findEndpoint, findFixture, extract, extractVariantsFromRequest} from './matcher';
+import pipeMiddlewares from './pipeMiddlewares';
 import {Request, Response, NextFunction} from 'express';
+import * as bodyParser from 'body-parser';
 
 export default (fixtureDirs: string[] = [], realApiBaseUrl?: string, outputDir?: string) => {
   const app = express();
@@ -71,7 +73,15 @@ export default (fixtureDirs: string[] = [], realApiBaseUrl?: string, outputDir?:
       const fixture = loadFixture(foundFixturePath);
       req.params = { ...req.params, ...extract(foundEndpoint.endpoint, req.path)};
       console.log(`${chalk.magenta('[Stub server]')} using fixture from ${chalk.yellow(foundFixturePath)}`);
-      typeof fixture === 'function' ? fixture(req, res, next) : res.json(fixture);
+      if (typeof fixture === 'function') {
+        pipeMiddlewares([
+          bodyParser.json(),
+          bodyParser.urlencoded({ extended: true }),
+          fixture,
+        ])(req, res, next);
+      } else {
+        res.json(fixture);
+      }
     } else {
       next();
     }

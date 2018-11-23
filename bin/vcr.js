@@ -40,12 +40,6 @@ var port = canUsePort(argv.port) ? argv.port : DEFAULT_PORT;
 //this is a fix for azure systems
 port = process.env.PORT || port;
 
-//this part is to read the contents of form elements
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded());
-// in latest body-parser use like below.
-app.use(bodyParser.urlencoded({ extended: true }));
-
 app.use(server([fixturesDir], argv.proxy, argv.record && fixturesDir))
 app.listen(port, '0.0.0.0', function(err) {
   if (err) {
