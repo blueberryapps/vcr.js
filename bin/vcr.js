@@ -4,7 +4,6 @@ var express = require('express');
 var chalk = require('chalk');
 var server = require('../lib/server').default;
 var canUsePort = require('../lib/canUsePort').default;
-var bodyParser = require('body-parser');
 
 var DEFAULT_PORT = 8100;
 

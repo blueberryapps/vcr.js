@@ -1,17 +1,19 @@
 import * as chalk from 'chalk';
+import { NextFunction, Request, RequestHandler, Response } from 'express';
+import { IncomingMessage } from 'http';
 import * as request from 'request';
+import getFixturesDirs from '../../getFixturesDirs';
 import createProxyRequestOptions from './createProxyRequestOptions';
 import getFixturePath from './getFixturePath';
 import getProxyResponseHeaders from './getProxyResponseHeaders';
 import writeFixture from './writeFixture';
-import {IncomingMessage} from 'http';
-import {Request, Response, NextFunction, RequestHandler} from 'express';
 
 export default (realApiBaseUrl: string, outputDir?: string): RequestHandler =>
   (req: Request, res: Response, next: NextFunction): void => {
     if (req.path === '/') return next();
 
     const apiReqURL = `${realApiBaseUrl}${req.originalUrl}`;
+    const outputCasette = getFixturesDirs(req, outputDir ? [outputDir] : [])[0];
 
     // pipe request from stub server to real API
     req
@@ -26,7 +28,7 @@ export default (realApiBaseUrl: string, outputDir?: string): RequestHandler =>
 
         // response from API is OK
         console.log(`${chalk.magenta('[Stub server]')} proxy request to ${chalk.yellow(realApiBaseUrl + req.originalUrl)} ended up with ${chalk.green(`${proxyRes.statusCode}`)} returning its response`);
-        const headers = {...proxyRes.headers, ...getProxyResponseHeaders(req, apiReqURL, outputDir)};
+        const headers = {...proxyRes.headers, ...getProxyResponseHeaders(req, apiReqURL, outputCasette)};
         res.writeHead(proxyRes.statusCode || 500, headers);
 
         // pipe API response to client till the 'end'
@@ -35,8 +37,8 @@ export default (realApiBaseUrl: string, outputDir?: string): RequestHandler =>
         proxyRes.on('end', () => { res.end(); });
 
         // write response as fixture on the disc
-        if (outputDir) {
-          const fullPath = getFixturePath(req, outputDir);
+        if (outputCasette) {
+          const fullPath = getFixturePath(req, outputCasette);
           writeFixture(fullPath, proxyRes, next);
         }
       });
