@@ -8,8 +8,11 @@ import loadFixture from './loadFixture';
 import proxyMiddleware from './middlewares/proxy';
 import {cleanupVariantsConflicts} from './variants';
 import {Endpoint, extractEndpoints} from './endpoints';
+import getFixturesDirs from './getFixturesDirs';
 import {findEndpoint, findFixture, extract, extractVariantsFromRequest} from './matcher';
+import pipeMiddlewares from './pipeMiddlewares';
 import {Request, Response, NextFunction} from 'express';
+import * as bodyParser from 'body-parser';
 
 export default (fixtureDirs: string[] = [], realApiBaseUrl?: string, outputDir?: string) => {
   const app = express();
@@ -21,7 +24,7 @@ export default (fixtureDirs: string[] = [], realApiBaseUrl?: string, outputDir?:
   app.use(cookieParser());
   app.use(morgan(`${chalk.magenta('[Stub server]')} ${chalk.green(':method')} :url ${chalk.magenta(':status')} ${chalk.cyan(':response-time ms')} HTTP/:http-version :date[iso]`));
 
-  console.log(`${chalk.magenta('[Stub server]')} looking for fixtures in:`);
+  console.log(`${chalk.magenta('[Stub server]')} if no cassette cookie specified, looking for fixtures in:`);
   console.log(chalk.yellow(fixtureDirs.join(',')));
   console.log(`${chalk.magenta('[Stub server]')} found fixtures:`);
   console.log(extractEndpoints(listAllFixtures(fixtureDirs)).map(e =>
@@ -52,17 +55,17 @@ export default (fixtureDirs: string[] = [], realApiBaseUrl?: string, outputDir?:
       .cookie('variants', variants.join(','), ({ encode: String } as express.CookieOptions))
       .json({
         variants,
-        possibleVariants: extractEndpoints(listAllFixtures(fixtureDirs)).reduce((acc: string[], endpoint: Endpoint) =>
+        possibleVariants: extractEndpoints(listAllFixtures(getFixturesDirs(req, fixtureDirs))).reduce((acc: string[], endpoint: Endpoint) =>
           acc.concat(
             Object.keys(endpoint.variants).map(variant => `${endpoint.endpoint}/${endpoint.method}.${variant}`)
           )
-        ,                                                                       [])
+        ,                                                                                             [])
       });
   });
 
   // Resolve fixture
   app.use((req: Request, res: Response, next: NextFunction): void => {
-    const endpoints = extractEndpoints(listAllFixtures(fixtureDirs));
+    const endpoints = extractEndpoints(listAllFixtures(getFixturesDirs(req, fixtureDirs)));
     const foundEndpoint = findEndpoint(endpoints, req);
     const foundFixturePath = foundEndpoint && findFixture(req, foundEndpoint);
 
@@ -70,7 +73,15 @@ export default (fixtureDirs: string[] = [], realApiBaseUrl?: string, outputDir?:
       const fixture = loadFixture(foundFixturePath);
       req.params = { ...req.params, ...extract(foundEndpoint.endpoint, req.path)};
       console.log(`${chalk.magenta('[Stub server]')} using fixture from ${chalk.yellow(foundFixturePath)}`);
-      typeof fixture === 'function' ? fixture(req, res, next) : res.json(fixture);
+      if (typeof fixture === 'function') {
+        pipeMiddlewares([
+          bodyParser.json(),
+          bodyParser.urlencoded({ extended: true }),
+          fixture,
+        ])(req, res, next);
+      } else {
+        res.json(fixture);
+      }
     } else {
       next();
     }
@@ -83,7 +94,7 @@ export default (fixtureDirs: string[] = [], realApiBaseUrl?: string, outputDir?:
 
   // Fallback path for displaying all possible endpoints
   app.use((req: Request, res: Response, next: NextFunction): void => {
-    const endpoints = extractEndpoints(listAllFixtures(fixtureDirs));
+    const endpoints = extractEndpoints(listAllFixtures(getFixturesDirs(req, fixtureDirs)));
     const matchedEndpoints = endpoints.filter(e => e.method === req.method && e.endpoint.indexOf(req.path) > -1);
 
     res.status(404).json({

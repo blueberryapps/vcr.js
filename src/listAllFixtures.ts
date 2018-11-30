@@ -5,8 +5,24 @@ export interface FixturesMap {[key: string]: string; };
 
 const SUPPORTED_METHODS = new Set(['GET', 'POST', 'PUT', 'DELETE', 'PATCH']);
 
+const isDir = (dir: string): boolean => {
+  try {
+    if (fs.statSync(dir).isDirectory()) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (e) {
+    return false;
+  }
+};
+
 // List all files in a directory in Node.js recursively in a synchronous fashion
 const walkSync = function(dir: string, filelist: string[] = []): string[] {
+  if (!isDir(dir)) {
+    return [];
+  }
+
   const files = fs.readdirSync(dir);
   files.forEach((file: string) => {
     const filePath = path.join(dir, file);

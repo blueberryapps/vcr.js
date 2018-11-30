@@ -1,10 +1,10 @@
-import * as request from 'supertest';
-import server from '../server';
-import * as path from 'path';
-import listAllFixtures from '../listAllFixtures';
-import { emptyDirSync } from 'fs-extra';
-import { spawn, ChildProcess } from 'child_process';
 import * as BluebirdPromise from 'bluebird';
+import { ChildProcess, spawn } from 'child_process';
+import { emptyDirSync, removeSync } from 'fs-extra';
+import * as path from 'path';
+import * as request from 'supertest';
+import listAllFixtures from '../listAllFixtures';
+import server from '../server';
 import kill from './helpers/killProcessTree';
 
 let mockServer: ChildProcess;
@@ -67,8 +67,14 @@ describe('Stub server', () => {
             variants: {
               default: path.join(__dirname, 'fixtures/cnx-gbl-org-quality/qa/v1/dtm/events/GET.default.json')
             }
-          }
-
+          },
+          {
+            endpoint: '/express-handler',
+            method: 'POST',
+            variants: {
+              default: path.join(__dirname, 'fixtures/express-handler/POST.default.js')
+            }
+          },
         ]);
       })
   );
@@ -155,7 +161,8 @@ describe('Stub server', () => {
           '/cnx-gbl-org-quality/qa/v1/dm/jobsites/1/GET.default',
           '/cnx-gbl-org-quality/qa/v1/dm/jobsites/GET.page=5&size=10',
           '/cnx-gbl-org-quality/qa/v1/dm/jobsites/{id}/GET.default',
-          '/cnx-gbl-org-quality/qa/v1/dtm/events/GET.default'
+          '/cnx-gbl-org-quality/qa/v1/dtm/events/GET.default',
+          '/express-handler/POST.default',
         ])
       );
   });
@@ -210,9 +217,31 @@ describe('Stub server', () => {
       .get('/users')
       .expect(200)
       .then((res: request.Response) => {
-        expect(res.body.length).toEqual(10); // should return 10 users
+        // expect(res.body.length).toEqual(10); // should return 10 users
         expect(res.body[0].id).toEqual(1); // should return id 1 for first user
         expect(res.body[0].username).toEqual('Bret'); // should return id 1 for first user
+      });
+  });
+
+  it('should use fixturesDir specified in cassette cookie', async () => {
+    const cassetteDir = path.join(__dirname, 'customCassette');
+    await request.agent(app)
+      .get('/very-different')
+      .set('Cookie', `cassette=${cassetteDir}`)
+      .expect(200)
+      .then((res: request.Response) => {
+        expect(res.body).toEqual({name: 'Forrest'});
+      });
+  });
+
+  it('should parse body for POST js fixtures', async () => {
+    await request.agent(app)
+      .post('/express-handler')
+      .send({ parsed: {num: 42} })
+      .set('Accept', 'application/json')
+      .expect(200)
+      .then((res: request.Response) => {
+        expect(res.body).toEqual({num: 42});
       });
   });
 });
@@ -329,6 +358,24 @@ describe('Stub server in proxy mode', async () => {
       });
   });
 
+  it('should proxy and save fixture to custom cassette', async () => {
+    const cassetteDir = path.join(__dirname, 'empty-vhs');
+    const appserver = server([cassetteDir], 'http://localhost:5000', 'overwritten-by-cassette');
+
+    await request.agent(appserver)
+      .get('/mocked-vhs')
+      .set('Cookie', `cassette=${cassetteDir}`)
+      .expect(200)
+      .then((res: request.Response) => {
+        const fixture = require(path.join(cassetteDir, 'mocked-vhs', 'GET.default.json'));
+
+        expect(res.body.answer).toBe(42);
+        expect(fixture.answer).toBe(42);
+      });
+    
+    removeSync(cassetteDir);
+  });
+
   it('should proxy requests and keep query params', async () => {
     const appserver = server(fixtureDirs, 'http://localhost:5000', outputFixturesDir);
     await request.agent(appserver)
@@ -357,5 +404,4 @@ describe('Stub server in proxy mode', async () => {
         expect(fixture.bodyProp).toBe(42);
       });
   });
-
 });
