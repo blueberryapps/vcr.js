@@ -24,7 +24,7 @@ export default (fixtureDirs: string[] = [], realApiBaseUrl?: string, outputDir?:
   app.use(cookieParser());
   app.use(morgan(`${chalk.magenta('[Stub server]')} ${chalk.green(':method')} :url ${chalk.magenta(':status')} ${chalk.cyan(':response-time ms')} HTTP/:http-version :date[iso]`));
 
-  console.log(`${chalk.magenta('[Stub server]')} if no casette cookie specified, looking for fixtures in:`);
+  console.log(`${chalk.magenta('[Stub server]')} if no cassette cookie specified, looking for fixtures in:`);
   console.log(chalk.yellow(fixtureDirs.join(',')));
   console.log(`${chalk.magenta('[Stub server]')} found fixtures:`);
   console.log(extractEndpoints(listAllFixtures(fixtureDirs)).map(e =>

@@ -1,10 +1,10 @@
-import * as request from 'supertest';
-import server from '../server';
-import * as path from 'path';
-import listAllFixtures from '../listAllFixtures';
-import { emptyDirSync, removeSync } from 'fs-extra';
-import { spawn, ChildProcess } from 'child_process';
 import * as BluebirdPromise from 'bluebird';
+import { ChildProcess, spawn } from 'child_process';
+import { emptyDirSync, removeSync } from 'fs-extra';
+import * as path from 'path';
+import * as request from 'supertest';
+import listAllFixtures from '../listAllFixtures';
+import server from '../server';
 import kill from './helpers/killProcessTree';
 
 let mockServer: ChildProcess;
@@ -223,11 +223,11 @@ describe('Stub server', () => {
       });
   });
 
-  it('should use fixturesDir specified in casette cookie', async () => {
-    const casetteDir = path.join(__dirname, 'customCasette');
+  it('should use fixturesDir specified in cassette cookie', async () => {
+    const cassetteDir = path.join(__dirname, 'customCassette');
     await request.agent(app)
       .get('/very-different')
-      .set('Cookie', `casette=${casetteDir}`)
+      .set('Cookie', `cassette=${cassetteDir}`)
       .expect(200)
       .then((res: request.Response) => {
         expect(res.body).toEqual({name: 'Forrest'});
@@ -358,22 +358,22 @@ describe('Stub server in proxy mode', async () => {
       });
   });
 
-  it('should proxy and save fixture to custom casette', async () => {
-    const casetteDir = path.join(__dirname, 'empty-vhs');
-    const appserver = server([casetteDir], 'http://localhost:5000', 'overwritten-by-casette');
+  it('should proxy and save fixture to custom cassette', async () => {
+    const cassetteDir = path.join(__dirname, 'empty-vhs');
+    const appserver = server([cassetteDir], 'http://localhost:5000', 'overwritten-by-cassette');
 
     await request.agent(appserver)
       .get('/mocked-vhs')
-      .set('Cookie', `casette=${casetteDir}`)
+      .set('Cookie', `cassette=${cassetteDir}`)
       .expect(200)
       .then((res: request.Response) => {
-        const fixture = require(path.join(casetteDir, 'mocked-vhs', 'GET.default.json'));
+        const fixture = require(path.join(cassetteDir, 'mocked-vhs', 'GET.default.json'));
 
         expect(res.body.answer).toBe(42);
         expect(fixture.answer).toBe(42);
       });
     
-    removeSync(casetteDir);
+    removeSync(cassetteDir);
   });
 
   it('should proxy requests and keep query params', async () => {

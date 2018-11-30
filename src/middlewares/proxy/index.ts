@@ -13,7 +13,7 @@ export default (realApiBaseUrl: string, outputDir?: string): RequestHandler =>
     if (req.path === '/') return next();
 
     const apiReqURL = `${realApiBaseUrl}${req.originalUrl}`;
-    const outputCasette = getFixturesDirs(req, outputDir ? [outputDir] : [])[0];
+    const outputCassette = getFixturesDirs(req, outputDir ? [outputDir] : [])[0];
 
     // pipe request from stub server to real API
     req
@@ -28,7 +28,7 @@ export default (realApiBaseUrl: string, outputDir?: string): RequestHandler =>
 
         // response from API is OK
         console.log(`${chalk.magenta('[Stub server]')} proxy request to ${chalk.yellow(realApiBaseUrl + req.originalUrl)} ended up with ${chalk.green(`${proxyRes.statusCode}`)} returning its response`);
-        const headers = {...proxyRes.headers, ...getProxyResponseHeaders(req, apiReqURL, outputCasette)};
+        const headers = {...proxyRes.headers, ...getProxyResponseHeaders(req, apiReqURL, outputCassette)};
         res.writeHead(proxyRes.statusCode || 500, headers);
 
         // pipe API response to client till the 'end'
@@ -37,8 +37,8 @@ export default (realApiBaseUrl: string, outputDir?: string): RequestHandler =>
         proxyRes.on('end', () => { res.end(); });
 
         // write response as fixture on the disc
-        if (outputCasette) {
-          const fullPath = getFixturePath(req, outputCasette);
+        if (outputCassette) {
+          const fullPath = getFixturePath(req, outputCassette);
           writeFixture(fullPath, proxyRes, next);
         }
       });
