@@ -1,10 +1,12 @@
-# VCR.js [![CircleCI](https://circleci.com/gh/blueberryapps/vcr.js.svg?style=svg)](https://circleci.com/gh/blueberryapps/vcr.js) [![Dependency Status](https://dependencyci.com/github/blueberryapps/vcr.js/badge)](https://dependencyci.com/github/blueberryapps/vcr.js)
+# VCR.js-next
+
+## fork of [original blueberryapps/vcr.js](https://github.com/blueberryapps/vcr.js) with [cassettes](#cassettes) feature
 
 Mock server with Proxy and Record support inspired by ruby VCR.
 
 ## tl;dr
 ```
-yarn add vcr.js
+yarn add vcr.js-next
 mkdir -p fixtures/users
 echo '{"users": ["Tim", "Tom"]}' > ./fixtures/users/GET.default.json
 yarn vcr -- -f ./fixtures
@@ -94,6 +96,9 @@ response from `https://ap.io/users` is streamed to the client and is also saved 
 ### Custom variants for recording
 If you want to save fixtures from proxy under a custom variant, just set the `record_fixture_variant` cookie with any word you want as the value.
 With the `record_fixture_variant=blacklistedUser` cookie the recorded fixtures will be saved as `{path}/GET.blacklistedUser.json`.
+
+## Cassettes
+If you need completely separated sets of fixtures, set `cassette` cookie with *absolute path* to folder containing the fixtures. The same cookie in proxy-record mode will create the folder and save fixtures there. To have colocated cassettes and tests in cypress, you can use `const cassette = path.resolve(path.dirname(Cypress.spec.absolute), './fixtures-folder')`
 
 ## Development
 
