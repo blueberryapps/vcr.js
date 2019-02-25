@@ -59,7 +59,7 @@ export function extractVariant(foundEndpoint: Endpoint, req: Request): string {
 }
 
 export function findEndpoint(endpoints: Endpoint[], req: Request): Endpoint | undefined {
-  return endpoints.find(e => e.method === req.method && matcher(e.endpoint, req.path));
+  return endpoints.find(e => e.method === req.method && matcher(e.endpoint, req.path.replace(/\/$/, '')));
 }
 
 export function findFixture(req: Request, foundEndpoint?: Endpoint): string | null {
