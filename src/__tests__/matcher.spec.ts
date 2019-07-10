@@ -11,15 +11,18 @@ const testCasesMatches: TestCase = {
     '/jobs/foo',
     '/jobs/100',
     '/jobs/0',
+    '/jobs/0/',
   ],
   '/jobs/{id}/site': [
     '/jobs/foo/site',
     '/jobs/100/site',
     '/jobs/0/site',
+    '/jobs/0/site/',
   ],
   '/jobs/1/site': [
     '/jobs/1/site',
-  ]
+    'jobs/1/site/',
+  ],
 };
 
 const testCasesNotMatches: TestCase = {
