@@ -36,7 +36,7 @@ const walkSync = function(dir: string, filelist: string[] = []): string[] {
 };
 
 const isFixture = (absolutePath: string): boolean => {
-  const extensionSupported = /\.(js|json)$/.test(absolutePath);
+  const extensionSupported = /\.(js|json|txt)$/.test(absolutePath);
 
   const fixtureMethod = path.basename(absolutePath).split('.')[0].toUpperCase();
   const methodSupported = SUPPORTED_METHODS.has(fixtureMethod);

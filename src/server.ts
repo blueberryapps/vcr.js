@@ -79,6 +79,8 @@ export default (fixtureDirs: string[] = [], realApiBaseUrl?: string, outputDir?:
           bodyParser.urlencoded({ extended: true }),
           fixture,
         ])(req, res, next);
+      } else if (foundFixturePath.split('.').pop() === 'txt') {
+        res.set('Content-Type', 'text/plain').send(fixture);
       } else {
         res.json(fixture);
       }
